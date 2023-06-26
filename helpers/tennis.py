@@ -101,8 +101,22 @@ class TennisMatch:
         self.sets[-1].set_score(scores)
         self.update()
 
+    def increment_game(self, player: int, amount: int = 1):
+        scores = list(self.sets[-1].scores)
+        scores[player] += amount
+        self.update_scores(tuple(scores))
+
     def to_series(self):
         return pd.Series(self.__dict__)
+    
+    def scoreboard(self):
+        records = []
+        for i in range(len(self.players)):
+            record = dict()
+            record['name'] = self.players[0].name
+            record['games'] = [set.scores[0] for set in self.sets]
+            records.append(record)
+        return records
 
     # def __post_init__(self):
     #     self.sets = []

@@ -91,6 +91,30 @@ class TennisMatchTestCase(unittest.TestCase):
         self.assertEqual(match.status, "Complete")
         self.assertEqual(match.winner, player1)
 
+    def test_TennisMatch_increment_game(self):
+        player1 = TennisPlayer(name="Alice")
+        player2 = TennisPlayer(name="Bob")
+        match = TennisMatch(players=(player1, player2))
+        match.new_set(scores=(5, 0))
+        match.increment_game(player=0)  # player 1 wins game
+        self.assertEqual(match.sets[-1].scores, (6, 0))
+
+        # Adding a game when the current set is complete should raise an error
+        self.assertEqual(match.sets[-1].status, "Complete")
+        self.assertRaises(ValueError, match.increment_game, player=0)
+
+        # Test removing a game
+        match.new_set(scores=(3, 0))
+        match.increment_game(player=0, amount=-1)
+        self.assertEqual(match.sets[-1].scores, (2, 0))
+
+    def test_TennisMatch_scoreboard(self):
+        player1 = TennisPlayer(name="Alice")
+        player2 = TennisPlayer(name="Bob")
+        match = TennisMatch(players=(player1, player2))
+        match.new_set()
+        scoreboard = match.scoreboard()
+
     def test_TennisMatch_to_series(self):
         player1 = TennisPlayer(name="Alice")
         player2 = TennisPlayer(name="Bob")
