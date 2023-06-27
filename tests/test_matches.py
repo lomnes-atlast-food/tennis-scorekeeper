@@ -112,8 +112,12 @@ class TennisMatchTestCase(unittest.TestCase):
         player1 = TennisPlayer(name="Alice")
         player2 = TennisPlayer(name="Bob")
         match = TennisMatch(players=(player1, player2))
-        match.new_set()
+        match.new_set(scores=(6, 0))
+        match.new_set(scores=(0, 6))
+        match.new_set(scores=(6, 0))
         scoreboard = match.scoreboard()
+        self.assertIsInstance(scoreboard, pd.DataFrame)
+        self.assertEqual(scoreboard.shape, (2, 1))
 
     def test_TennisMatch_to_series(self):
         player1 = TennisPlayer(name="Alice")

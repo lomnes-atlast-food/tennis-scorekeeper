@@ -56,6 +56,7 @@ class TennisMatch:
         if len(self.sets) == 0:
             self.status = "In Progress"
             self.winner = None
+            self.sets_won = (0, 0)
             return
         if len(self.sets) > 3:
             raise ValueError("Match cannot have more than 3 sets")
@@ -81,6 +82,7 @@ class TennisMatch:
 
         self.status = "In Progress"
         self.winner = None
+        self.sets_won = (player1_wins, player2_wins)
         return
 
     def new_set(self, scores: Tuple = (0, 0)):
@@ -94,10 +96,10 @@ class TennisMatch:
             raise ValueError("Current set is not complete")
 
     def update_scores(self, scores: Tuple = (0, 0)):
-        if self.status == "Complete":
-            raise ValueError("Match is complete")
-        if self.sets[-1].status == "Complete":
-            raise ValueError("Current set is complete")
+        # if self.status == "Complete":
+        #     raise ValueError("Match is complete")
+        # if self.sets[-1].status == "Complete":
+        #     raise ValueError("Current set is complete")
         self.sets[-1].set_score(scores)
         self.update()
 
@@ -108,23 +110,16 @@ class TennisMatch:
 
     def to_series(self):
         return pd.Series(self.__dict__)
-    
+
     def scoreboard(self):
         records = []
         for i in range(len(self.players)):
             record = dict()
-            record['name'] = self.players[0].name
-            record['games'] = [set.scores[0] for set in self.sets]
+            record["name"] = self.players[i].name
+            record["games"] = [set.scores[i] for set in self.sets]
             records.append(record)
-        return records
 
-    # def __post_init__(self):
-    #     self.sets = []
-    #     self.status = "In Progress"
-    #     self.winner = None
-
-    # def submit_set(self, set):
-    #     self.sets.append(set)
+        return pd.DataFrame(records).set_index("name")
 
 
 if __name__ == "__main__":
